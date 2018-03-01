@@ -1,0 +1,182 @@
+Plesk Binaries
+Located in the %plesk_bin%\ directory
+1) websrvmng.exe
+To install hosting for a domain
+
+websrvmng.exe --install-vhost --vhost-name=<domain name> 
+
+
+
+To remove hosting for a domain
+
+websrvmng.exe --remove-vhost --vhost-name=<domain name> 
+
+
+
+To reconfigure hosting for a domain
+
+websrvmng.exe --reconfigure-vhost --vhost-name=<domain name> 
+
+
+
+To reconfigure a subdomain
+
+websrvmng.exe  --update-subdomain --vhost-name=<domain name> --subdomain=<subdomain>
+
+
+
+Passwords for system user and IIS user can be unsynchronized or synchronised using
+
+websrvmng.exe  --update-anon-password --domain-name=<domain name>
+
+
+
+To reconfigure webmail
+
+websrvmng.exe  --reconfigure-webmail
+defpackagemng.exe" --fix --type=webmail
+
+2) mchk.exe
+To Reset server-wide and domain's mail settings forcefully
+
+mchk.exe --all --fix-all
+
+
+
+To Check and restore mail settings for a domain defined
+
+mchk.exe --domain --domain-name=sampledomain.com
+
+
+
+To Check and restore only server-wide mail settings
+
+mchk.exe --global-settings
+
+3) protdir.exe
+
+protdir.exe --create Protected_Dir -domain domain1.com -add_user MyGuest -passwd "MyPass"
+
+To set a password for the user of a web-protected directory:
+
+protdir.exe --update Protected_Sample -domain somewhere.com -update_user johndoe -passwd Password1
+
+
+
+To remove protected directory user:
+
+protdir.exe --update Protected_Dir -remove_user johndoe 
+
+4) Subdomain.exe
+
+subdomain.exe --create subdomain2 -domain domain1.com -hard_quota 50 -ssi true
+
+
+
+To remove subdomain1.somewhere.com from somewhere.com domain:
+
+subdomain.exe --remove subdomain1 -domain somewhere.com 
+
+
+
+To change the existing subdomain name subdomain1.somewhere.com to the new one - subdomain1_new.somewhere.com
+
+subdomain.exe --update subdomain1 -domain somewhere.com -new_name subdomain1_new
+
+
+
+To enable FrontPage support for subdomain1.somewhere.com:
+
+subdomain.exe --update subdomain1 -domain somewhere.com -fp true
+
+
+
+To retrieve information on subdomain1.somewhere.com:
+
+subdomain.exe --info subdomain1 -domain somewhere.com
+
+5) domain.exe
+
+domain.exe --create domain1.com -clogin John_Doe -dom_user false -www true -hosting true -ip 143.230.22.14 -cgi true -notify false
+
+
+
+To retrieve sampledomain.com domain information:
+
+domain.exe --info sampledomain.com 
+
+
+
+To rename sampledomain.com domain to sampledomain1.com domain:
+
+domain.exe --update sampledomain.com -new_name sampledomain1.com
+
+
+
+To enable domain user account with password "somepass" for sampledomain.com domain:
+
+domain.exe --update sampledomain.com -dom_user true -du_passwd somepass
+
+
+
+To set name for domain user of a sampledomain.com domain to "John":
+
+domain.exe --update sampledomain.com -du_pname "John"
+
+
+
+To enable hosting for sampledomain.com domain:
+
+domain.exe --update sampledomain.com -hosting true
+
+6) plesksrvmng.exe
+To reset the password for admin control panel
+
+plesksrvmng.exe
+
+
+
+To get the existing password for the admin control panel
+
+plesksrvmng.exe -get
+
+7) statistics.exe
+Updates the statistics for all domains on the server
+--------------------
+
+
+
+
+
+crear dns zona a partir de mdb
+
+
+ quinn  quinn is offline
+Junior Member
+	  	
+Join Date: Oct 2007
+Posts: 17
+Default Cannot delete domains, Table::select() failed: no such row in the table
+Problem: While deleting domains in Plesk, the error comes up
+[quote]Unable to remove domains: Problems occured while removing domains: Table::select() failed: no such row in the table[/delete]
+
+Cause:
+Plesk partiallt deleted the domain in the previous attempt. So in the second attempt, Plesk cannot find the record in dns_zone
+
+Resolution:
+Try a simple recourse first: Reboot the server and after that run Plesk reconfigurator and try repairing the database.
+
+If it does not work, then you need to manually add the domain record in the dns_zone table.
+
+Assuming that the domain is 'domain_name.com' and Plesk is working with an access database (You may download this free access database editor from http://www.alexnolan.net/software/mdb_viewer_plus.htm)
+
+First find the record number of the domain 'domain_name.com' in Plesk database (table name domains).
+Quote:
+select dns_zone_id from domains where name='domain_name.com';
+Assuming we got the record number 111, we proceed to manually insert the domain information in the dns_zone table
+Quote:
+INSERT INTO `dns_zone` VALUES (111,'domain_name.com','domain_name.com','admin@domain_name.com',0,'master',86400,86400,10800,3600,3600,3600,604800,86400,10800,3600);
+Close the database and log on to Plesk.
+You should be able to delete the domain normally now.
+__________________
+WHA Staff
