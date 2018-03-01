@@ -1,0 +1,1 @@
+ps -a -o pid, user, class, pcpu, pmem, args
