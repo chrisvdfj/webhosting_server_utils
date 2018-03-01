@@ -1,0 +1,23 @@
+Plesk Control Panel works slowly.
+Cause
+Reason 1
+
+Jet is used as Plesk database engine. Most likely the reason of the problem is large Plesk database file psa.mdb. This could be caused by number of empty records in this database. Empty records appear when any entries are removed from database – this is standard behavior of DB4 databases.
+
+Reason 2
+
+Long time of login in to Plesk Control panel might be caused by huge  number of records in  “Sessions” table of Plesk database.
+Resolution
+Solution 1
+
+    * Stop Plesk Control Panel and Plesk Management services.
+    * Please use the following VBS script to compress psa.mdb file (it is necessary to create file e.g. script.vbs, and paste provided below text there, then run just created script.vbs): 
+
+Set Engine = CreateObject("JRO.JetEngine")
+Engine.CompactDatabase "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=psa.mdb", "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=compressed_psa.mdb"
+
+    * Rename psa.mdb to psa.mdb_old 
+    * Rename compressed_psa.mdb to psa.mdb 
+    * Start Plesk Control Panel and Plesk Management services
+    
+    
