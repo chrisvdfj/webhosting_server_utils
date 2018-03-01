@@ -1,0 +1,15 @@
+vm.bdflush = 50 500     0       0       500     3000    80      50      0
+
+
+50      500     0       0       500     3000    80      50      0
+
+Everybody says that
+
+echo 100 5000 640 2560 150 30000 5000 1884 2 > /proc/sys/vm/bdflush
+
+Refresh kscand every 0,6 sec
+echo 50 500 0 0 60 300 80 50 0 > /proc/sys/vm/bdflush
+
+Original
+echo 50 500 0 0 500 3000 80 50 0 > /proc/sys/vm/bdflush
+
