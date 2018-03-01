@@ -1,0 +1,29 @@
+Fix Subdomain
+
+FIND ID from psa dbo
+SELECT id, name FROM [psa].[dbo].[dns_zone] where name=domain_name;
+
+update subdomain
+C:\Program Files\SWsoft\Plesk\admin\bin>
+websrvmng --update-subdomain --vhost-name=test.domain.com --subdomain=sub_domain_name
+
+
+reconfigure domain and subdomain
+websrvmng.exe --reconfigure-vhost --vhost-name=domain.com
+
+
+First find the record number of the domain 'domain_name.com' in Plesk database (table name domains).
+Quote:
+select dns_zone_id from domains where name='domain.com';
+
+Assuming we got the record number 111, we proceed to manually insert the domain information in the dns_zone table
+
+Quote:
+
+INSERT INTO `dns_zone` VALUES (279,'domainname.com','domainname.com','admin@domainname.cl',0,'master',86400,86400,10800,3600,3600,3600,604800,86400,10800,3600);
+
+Close the database and log on to Plesk.
+
+You should be able to delete the domain normally now.
+
+
