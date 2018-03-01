@@ -1,0 +1,1 @@
+ps -eakl | head -1; ps -eakl | sort -rn +5
