@@ -1,0 +1,36 @@
+Solution 2
+
+It is necessary to erase the table by the following command:
+
+"%plesk_bin%\dbclient.exe" --direct-sql --sql="delete from `sessions`"
+Additional information
+%plesk_dir% is environment variable which points to Plesk installation folder. By default it is C:\Program Files\SWsoft\Plesk.  
+%plesk_bin% is environment variable which by default points to C:\Program Files\SWsoft\Plesk\admin\bin.
+
+-----------------------
+If you are still unable to remove the domain from the Control panel it means that the domain account is corrupted, you will need to remove it manually. Before you start this process it is important to backup Plesk and also the psa database.
+
+   1. Remove the domain from inetpub > vhosts
+   2. Remove from Mail Enable Administrator
+   3. Remove from C:\Program Files\SWsoft\Plesk\Mail Servers\Mail Enable\Post Offices
+   4. Remove from C:\Program Files\SWsoft\Plesk\Mail Servers\Mail Enable\Config\Post Offices
+   5. Remove from Internet Information Services manager
+   6. Remove from Computer management Console -  System Tools > Local Users and Groups > Users. You must remove referances to the domain for Plesk Domain User and Plesk IIS User
+   7. Remove DNS entry from C:\Program Files\SWsoft\plesk\dns\etc\named.conf
+   8. Remove all referances to the domain in the psa database for the following tables
+
+    * domains
+    * domain_aliases
+    * data_bases
+    * db_users
+    * sys_users
+    * hosting
+    * dns_recs
+
+You can access the psa database by opening a command prompt and changing to the mysql directory, usually \Program Files\SWsoft\Plesk\mysql\bin
+The type in the command "mysql -u admin -p password -P8306" where password is the admin password for Plesk.
+
+Once you have completed the above steps, the domain in question should be gone when you list domains in the Plesk Control Panel.
+
+------------------
+mount -w -o remount /
