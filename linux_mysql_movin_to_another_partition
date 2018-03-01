@@ -1,0 +1,45 @@
+While not all datacenters do there are some that by default partition the system in a less then ideal manner. I have had to deal with quiet a few clients who have filled up their /var partition due to mysql being stored by default on the partition. This is a short little guide to show you how to move mysql to another parition on the system. I have another guide that shows you how to parition a drive for mysql but many times it is not possible to repartition a drive and it is a lot easier to simply move it to another live parition. I would make sure and leave mysql in the old place, or at least a backup copy, for a few days before deleting it to make sure all of the data was transfered fine. If you want to move to a partition other then /backup/ simply change backup to home or the partition name anyplace you see it. In addition to the space considerations moving to a different drive can also have a profound positive influence on the system performance.
+
+First edit the my.cnf:
+
+pico -w /etc/my.cnf
+
+Now in the mysqld section add the following:
+
+pid-file = /backup/mysql/mysqld.pid
+socket = /var/lib/mysql/mysql.sock
+
+datadir = /backup/mysql
+basedir = /backup/mysql
+
+
+
+Now we are going to copy all of the data to the new partition. Notice that we do the copy TWICE, that is because moving 5gb of data can take some time and the tables may have changed. When we run it the second time we hopefully get it so that when the switch over happens there is very little, if any, lost data. If you can afford the downtime simply shut down mysql before running this command. If you cannot though running it twice then quickly copy/pasting the other commands is a valid substitute.
+
+
+rsync -vrplogDtH /var/lib/mysql/ /backup/mysql/
+rsync -vrplogDtH /var/lib/mysql/ /backup/mysql/
+
+
+Now we need to setup the mysql.sock so that it operates correctly:
+ln -s /backup/mysql/mysql.sock /var/lib/mysql/mysql.sock
+rm -rf /tmp/mysql.sock
+ln -s /backup/mysql/mysql.sock /tmp/mysql.sock
+
+Restart mysql so it is on the new parition:
+killall -9 mysqld
+service mysql start
+
+ 
+
+*Note* I do not show you deleting the /var/lib/mysql directory, go ahead and do that a few days after the move if you do not have good backups incase something went wrong. Make sure when you delete the /var/lib/mysql directory you recreate it so that the mysql.sock file can be created in the directory. Do the following to remove the old data and get the mysql.sock correctly set back up.
+
+rm -rf /var/lib/mysql
+mkdir /var/lib/mysql
+chown mysql /var/lib/mysql
+service mysql restart
+ln -s /backup/mysql/mysql.sock /var/lib/mysql/mysql.sock
+rm -rf /tmp/mysql.sock
+ln -s /backup/mysql/mysql.sock /tmp/mysql.sock
+
+Thats it, you are all done with moving mysql!
