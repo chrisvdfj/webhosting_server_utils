@@ -1,0 +1,9 @@
+Some Important Command to find DDOC Attack
+
+netstat -anp |grep 'tcp\|udp' | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+
+netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr
+
+netstat -ntu | grep -v TIME_WAIT | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -nr
+
+netstat -an | grep :80 | awk '{print $5}' | cut -f1 -d":" | sort | uniq -c | sort -n
