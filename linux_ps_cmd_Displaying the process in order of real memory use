@@ -1,0 +1,1 @@
+ps vx | head -1; ps vx | grep -v PID | sort -rn +6 | head -10
