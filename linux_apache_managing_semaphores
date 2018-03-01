@@ -1,0 +1,15 @@
+      for i in $(ipcs -s | grep apache | awk ‘{print $2}’);
+      do
+      ipcrm sem $i;
+      done
+      
+      -----------------------------------------
+      
+      
+      for a in `ipcs -s | grep apache | cut -f2 -d” “`; do ipcrm sem $a; done
+      
+      -----------------------------------------
+      
+      ipcs -s | grep nobody | awk "{print $2}" | xargs ipcrm sem
+      
+      
