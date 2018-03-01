@@ -1,0 +1,1 @@
+ps vg | head -1; ps vg | grep -w wait
