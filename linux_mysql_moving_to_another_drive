@@ -1,0 +1,43 @@
+MYSQL A OTRO DISCO
+You can often achieve better performance if your MySQL databases are stored on a drive other than your "main" drive. Thanks to M|22 for some guidance.
+
+I am assuming that your second drive is mounted as /home2
+
+The first step is to stop MySQL so that all your data gets copied correctly.
+/etc/rc.d/init.d/mysql stop
+
+We are going to make your new data directory /home2/mysqldata
+cp -R /var/lib/mysql/ /home2/mysqldata
+
+Set the correct owner and group, permissions are kept in the copying.
+chown -R mysql.mysql /home2/mysqldata/
+
+Remove your old data directory, we will just rename it but you can later delete it if you wish.
+mv /var/lib/mysql/ /var/lib/mysql_old
+
+Create a symlink from the old data location to the new one for any programs that rely on the common location.
+ln -s /home2/mysqldata/ /var/lib/mysql
+
+Set the correct owner and group on the symlink.
+chown mysql.mysql /var/lib/mysql
+
+Now that your data is moved we will edit the configuration file to update our changes. You do not have to do this since MySQL can follow the sym link we created but why make it follow the link if it doesn't have to.
+pico /etc/my.cnf
+
+Comment out the old settings and add a line for the new one as I have done here.
+
+#datadir=/var/lib/mysql
+datadir=/home2/mysqldata
+#socket=/var/lib/mysql/mysql.sock
+socket=/home2/mysqldata/mysql.sock
+
+#basedir=/var/lib
+basedir=/home2
+
+Exit and save
+
+Start MySQL
+/etc/rc.d/init.d/mysql start
+
+If MySQL refuses to start look in /var/log/mysqld.log for the reason.
+----------------------------------------------------------------------------------------------------------------------------------------
