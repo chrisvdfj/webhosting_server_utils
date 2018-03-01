@@ -1,0 +1,1 @@
+ps -mo THREAD -p <PID>
